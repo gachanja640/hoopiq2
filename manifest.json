@@ -1,0 +1,19 @@
+{
+  "name": "HoopIQ",
+  "short_name": "HoopIQ",
+  "description": "Basketball intelligence — live stats, fixture analysis, player form",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a12",
+  "theme_color": "#0a0a12",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["sports", "utilities"],
+  "shortcuts": [
+    { "name": "Today's Games", "url": "./index.html#today" },
+    { "name": "Analyser", "url": "./index.html#analyse" }
+  ]
+}

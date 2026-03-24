@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0a0a12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HoopIQ">
+<title>HoopIQ — Basketball Intelligence</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* Base */
+  --bg:#0a0a12;
+  --bg2:#0f0f1a;
+  --surface:#141420;
+  --surface2:#1c1c2e;
+  --surface3:#242438;
+  --border:#2a2a42;
+  --border-hi:#3d3d60;
+
+  /* NBA orange/purple + Instagram gradient energy */
+  --orange:#FF6B00;
+  --orange-dim:#b34c00;
+  --orange-bg:rgba(255,107,0,.1);
+  --orange-glow:rgba(255,107,0,.25);
+
+  --purple:#9333EA;
+  --purple-dim:#6b21a8;
+  --purple-bg:rgba(147,51,234,.1);
+
+  --neon:#C850C0;
+  --neon-bg:rgba(200,80,192,.1);
+
+  --gold:#F59E0B;
+  --gold-dim:#92400e;
+  --gold-bg:rgba(245,158,11,.1);
+
+  --teal:#06B6D4;
+  --teal-bg:rgba(6,182,212,.1);
+
+  --green:#10B981;
+  --green-dim:#065f46;
+  --green-bg:rgba(16,185,129,.1);
+
+  --red:#EF4444;
+  --red-dim:#7f1d1d;
+  --red-bg:rgba(239,68,68,.1);
+
+  --blue:#3B82F6;
+  --blue-bg:rgba(59,130,246,.1);
+
+  /* Text */
+  --ink:#F8F8FF;
+  --ink-muted:#A0A0C8;
+  --ink-dim:#505070;
+
+  /* IG gradient */
+  --ig-grad:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  --nba-grad:linear-gradient(135deg,#FF6B00,#C9002B);
+  --hoop-grad:linear-gradient(135deg,#FF6B00,#9333EA,#06B6D4);
+
+  --nav-h:68px;
+  --header-h:60px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:'DM Sans',system-ui,sans-serif;
+  font-size:17px;line-height:1.5;
+  display:flex;flex-direction:column;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
+}
+
+/* ══ PROGRESS ══ */
+#prog{position:fixed;top:0;left:0;height:3px;width:0%;z-index:9999;opacity:0;background:var(--hoop-grad);transition:width .4s ease;box-shadow:0 0 12px var(--orange)}
+#prog.on{opacity:1}
+
+/* ══ SPLASH ══ */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .5s ease,transform .5s ease;
+}
+#splash.hide{opacity:0;transform:scale(1.05);pointer-events:none}
+.spl-inner{display:flex;flex-direction:column;align-items:center;gap:1.2rem;animation:splIn .75s cubic-bezier(.22,1,.36,1) both}
+@keyframes splIn{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+.spl-icon{
+  width:108px;height:108px;border-radius:30px;
+  background:linear-gradient(135deg,#1a0a00,#100018);
+  display:flex;align-items:center;justify-content:center;
+  font-size:3.5rem;
+  box-shadow:0 0 0 1.5px rgba(255,107,0,.4),0 0 50px var(--orange-glow),0 24px 60px rgba(0,0,0,.6);
+  position:relative;overflow:hidden;
+}
+.spl-icon::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 38% 32%,rgba(255,107,0,.22),transparent 60%)}
+.spl-brand{
+  font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;
+  background:var(--hoop-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:-.03em;
+}
+.spl-tag{font-size:1rem;color:var(--ink-dim);letter-spacing:.08em;text-transform:uppercase;margin-top:-.5rem}
+.spl-pills{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+.spl-pill{font-size:.85rem;font-weight:600;padding:.3rem .85rem;border-radius:20px}
+.sp-nba{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(255,107,0,.35)}
+.sp-euro{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,.35)}
+.sp-live{background:var(--green-bg);color:var(--green);border:1px solid rgba(16,185,129,.35)}
+.spl-bar{width:200px;height:3px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:.6rem}
+.spl-fill{height:100%;background:var(--hoop-grad);width:0%;transition:width 1.3s cubic-bezier(.4,0,.2,1);border-radius:3px}
+
+/* ══ HEADER ══ */
+.app-header{
+  height:var(--header-h);flex-shrink:0;
+  background:rgba(10,10,18,.96);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.2rem;
+  backdrop-filter:blur(20px);
+  position:relative;z-index:50;
+}
+.app-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--hoop-grad);opacity:.35}
+.h-brand{display:flex;align-items:center;gap:.5rem}
+.h-logo{
+  font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;
+  background:var(--hoop-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:-.02em;
+}
+.h-live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+.h-right{display:flex;align-items:center;gap:.6rem}
+.h-btn{width:38px;height:38px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:all .18s;color:var(--ink-muted)}
+.h-btn:hover,.h-btn.active{border-color:var(--orange);color:var(--orange);background:var(--orange-bg)}
+.h-badge{font-size:.78rem;font-weight:700;padding:.26rem .7rem;border-radius:20px;background:var(--orange-bg);color:var(--orange);border:1px solid rgba(255,107,0,.3)}
+
+/* ══ SCROLL ══ */
+.app-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 1rem)}
+.app-scroll::-webkit-scrollbar{display:none}
+
+/* ══ SCREENS ══ */
+.screen{display:none;padding:1rem}
+.screen.active{display:block}
+
+/* ══ BOTTOM NAV ══ */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  height:calc(var(--nav-h) + var(--safe-bottom));
+  background:rgba(10,10,18,.97);border-top:1px solid var(--border);
+  backdrop-filter:blur(24px);
+  display:flex;align-items:flex-start;padding-bottom:var(--safe-bottom);
+}
+.nav-items{display:flex;width:100%;height:var(--nav-h)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;cursor:pointer;transition:all .2s;padding:.4rem .1rem;border:none;background:none;-webkit-tap-highlight-color:transparent;position:relative}
+.nav-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:all .22s;background:transparent}
+.nav-item.active .nav-icon{background:var(--orange-bg);box-shadow:0 4px 16px var(--orange-glow);transform:scale(1.08)}
+.nav-lbl{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:600;color:var(--ink-dim);transition:color .18s;letter-spacing:.01em}
+.nav-item.active .nav-lbl{color:var(--orange)}
+.nav-bdg{position:absolute;top:4px;right:calc(50% - 20px);background:var(--red);color:#fff;font-size:.6rem;font-weight:700;padding:.04rem .3rem;border-radius:10px;min-width:16px;text-align:center;display:none;border:2px solid var(--bg)}
+.nav-bdg.show{display:block}
+
+/* ══ SHARED ══ */
+.screen-header{margin-bottom:1.2rem}
+.screen-title{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.2}
+.screen-sub{font-size:.95rem;color:var(--ink-muted);margin-top:.3rem;line-height:1.5}
+
+/* Section labels */
+.sec-label{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem}
+.sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* Pills */
+.pill{display:inline-flex;align-items:center;gap:.28rem;font-size:.82rem;font-weight:600;padding:.26rem .72rem;border-radius:20px}
+.p-orange{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(255,107,0,.3)}
+.p-purple{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(147,51,234,.3)}
+.p-teal  {background:var(--teal-bg);  color:var(--teal);  border:1px solid rgba(6,182,212,.3)}
+.p-green {background:var(--green-bg); color:var(--green); border:1px solid rgba(16,185,129,.3)}
+.p-gold  {background:var(--gold-bg);  color:var(--gold);  border:1px solid rgba(245,158,11,.3)}
+.p-red   {background:var(--red-bg);   color:var(--red);   border:1px solid rgba(239,68,68,.3)}
+.p-blue  {background:var(--blue-bg);  color:var(--blue);  border:1px solid rgba(59,130,246,.3)}
+.p-neon  {background:var(--neon-bg);  color:var(--neon);  border:1px solid rgba(200,80,192,.3)}
+.p-gray  {background:var(--surface3); color:var(--ink-muted); border:1px solid var(--border)}
+
+/* Buttons */
+.btn{width:100%;padding:1rem 1.2rem;border-radius:16px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:all .2s}
+.btn-orange{background:var(--nba-grad);color:#fff;box-shadow:0 4px 20px var(--orange-glow)}
+.btn-orange:hover{box-shadow:0 6px 28px rgba(255,107,0,.4);transform:translateY(-1px)}
+.btn-orange:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-purple{background:linear-gradient(135deg,#6b21a8,#9333ea);color:#fff;box-shadow:0 4px 20px rgba(147,51,234,.25)}
+.btn-teal{background:linear-gradient(135deg,#0891b2,#06b6d4);color:#fff}
+.btn-green{background:linear-gradient(135deg,#065f46,#10b981);color:#fff}
+.btn-outline{background:var(--surface2);border:1.5px solid var(--border-hi);color:var(--ink-muted);font-size:.92rem;padding:.65rem 1.1rem;width:auto;border-radius:12px}
+.btn-outline:hover{border-color:var(--orange);color:var(--orange)}
+
+/* Fields */
+.field-lbl{font-size:.88rem;font-weight:600;color:var(--ink-muted);margin-bottom:.4rem}
+textarea.f,select.f,input.f{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:1.05rem;padding:.9rem 1.1rem;outline:none;transition:border-color .2s,-webkit-appearance:none}
+textarea.f{resize:vertical;min-height:130px;line-height:1.6}
+textarea.f::placeholder,input.f::placeholder{color:var(--ink-dim)}
+textarea.f:focus,select.f:focus,input.f:focus{border-color:var(--orange);background:var(--surface3)}
+select.f option{background:var(--surface2)}
+.hint{font-size:.9rem;color:var(--ink-dim);line-height:1.5;margin-top:.5rem}
+
+/* Input tabs */
+.itabs{display:flex;gap:.4rem;margin-bottom:0}
+.itab{flex:1;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;padding:.65rem;border-radius:14px 14px 0 0;cursor:pointer;background:var(--surface2);color:var(--ink-dim);border:1.5px solid var(--border);border-bottom:none;transition:all .18s}
+.itab.active{background:var(--surface);color:var(--orange);border-color:var(--orange)}
+.ipanel{display:none;background:var(--surface);border:1.5px solid var(--border);border-radius:0 0 16px 16px;padding:1.1rem}
+.ipanel.active{display:block}
+
+/* Upload */
+.upload-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;padding:2rem 1rem;background:var(--surface2);border:2px dashed var(--border-hi);border-radius:16px;cursor:pointer;text-align:center;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--orange);background:var(--surface3)}
+.upload-zone input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0,0,0,0);pointer-events:none}
+.uz-icon{font-size:2.2rem;opacity:.4}
+.uz-main{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:var(--ink-muted)}
+.uz-sub{font-size:.88rem;color:var(--ink-dim)}
+.ua-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.7rem}
+.ua-btn{display:flex;flex-direction:column;align-items:center;gap:.3rem;padding:.8rem .4rem;background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .18s}
+.ua-btn:hover{border-color:var(--orange)}
+.ua-btn input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0,0,0,0);pointer-events:none}
+.ua-icon{font-size:1.3rem}
+.ua-txt{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:600;color:var(--ink-muted)}
+.img-prev{background:var(--surface2);border:1.5px solid var(--green-dim);border-radius:14px;padding:.8rem;display:none}
+.img-prev.vis{display:block}
+.img-prev img{max-width:100%;max-height:220px;border-radius:10px;display:block;margin:0 auto;object-fit:contain}
+.prev-row{display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;flex-wrap:wrap;gap:.4rem}
+.prev-nm{font-size:.85rem;font-weight:600;color:var(--green);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:58%}
+.prev-btns{display:flex;gap:.4rem}
+.btn-reup{display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;font-weight:600;padding:.32rem .75rem;border-radius:10px;cursor:pointer;background:var(--surface3);border:1.5px solid var(--border-hi);color:var(--ink-muted)}
+.btn-reup input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0,0,0,0);pointer-events:none}
+.btn-remv{display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;font-weight:600;padding:.32rem .75rem;border-radius:10px;cursor:pointer;background:var(--red-bg);border:1.5px solid var(--red-dim);color:var(--red)}
+
+/* Loading */
+.loading{display:none;flex-direction:column;align-items:center;gap:1.1rem;padding:3.5rem 1.5rem;text-align:center}
+.loading.on{display:flex}
+.hoop-spinner{width:56px;height:56px;position:relative}
+.hoop-spinner::before,.hoop-spinner::after{content:'';position:absolute;border-radius:50%;border:3px solid transparent;animation:spin .9s linear infinite}
+.hoop-spinner::before{inset:0;border-top-color:var(--orange);border-right-color:var(--purple)}
+.hoop-spinner::after{inset:8px;border-top-color:var(--teal);border-left-color:var(--orange);animation-direction:reverse;animation-duration:.7s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-text{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--ink-muted)}
+.load-step{font-size:.9rem;color:var(--ink-dim);transition:opacity .3s}
+
+/* Output */
+.out-sec{display:none}.out-sec.on{display:block}
+.out-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.3rem;padding-bottom:1rem;border-bottom:1px solid var(--border);gap:.8rem;flex-wrap:wrap}
+.out-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;background:var(--hoop-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.out-ts{font-size:.85rem;color:var(--ink-dim);margin-top:.2rem}
+.stake-row{display:flex;align-items:center;gap:.5rem;background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:.35rem .75rem}
+.stake-lbl{font-size:.85rem;font-weight:600;color:var(--ink-dim)}
+.stake-cur{font-size:.82rem;color:var(--orange-dim)}
+.stake-inp{background:none;border:none;color:var(--orange);font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;width:72px;text-align:right;outline:none}
+.stake-inp::placeholder{color:var(--ink-dim)}
+.summary-card{background:linear-gradient(135deg,rgba(255,107,0,.08),rgba(147,51,234,.05));border:1.5px solid rgba(255,107,0,.2);border-radius:18px;padding:1.1rem 1.3rem;margin-bottom:1.2rem;font-size:1.05rem;color:var(--ink-muted);line-height:1.6;font-style:italic}
+.error-card{background:var(--red-bg);border:1.5px solid var(--red-dim);border-radius:16px;padding:1.1rem 1.3rem;color:var(--red);font-size:1rem}
+.raw-out{background:var(--surface2);border:1.5px solid var(--border);border-radius:16px;padding:1.2rem;font-size:.95rem;line-height:1.8;color:var(--ink);white-space:pre-wrap}
+
+/* ══ GAME CARDS — Instagram Reels style ══ */
+.game-grid{display:flex;flex-direction:column;gap:1rem}
+@media(min-width:600px){.game-grid{display:grid;grid-template-columns:1fr 1fr}}
+
+.game-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:20px;overflow:hidden;
+  animation:fadeUp .35s ease both;transition:border-color .2s,box-shadow .2s;
+  position:relative;
+}
+.game-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.gc-stripe{height:4px;width:100%}
+.stripe-a{background:linear-gradient(90deg,var(--orange),var(--purple),var(--teal))}
+.stripe-b{background:linear-gradient(90deg,var(--green),var(--teal))}
+.stripe-c{background:linear-gradient(90deg,var(--gold),var(--orange))}
+.stripe-r{background:linear-gradient(90deg,var(--red),var(--neon))}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.gc-body{padding:1.1rem 1.2rem}
+.gc-league{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.gc-teams{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--ink);margin-bottom:.65rem;line-height:1.3}
+.gc-teams span{color:var(--orange)}
+.gc-meta{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.7rem;align-items:center}
+.gc-stats{margin-bottom:.7rem}
+.stat-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.stat-label{font-size:.82rem;font-weight:600;color:var(--ink-dim);min-width:80px}
+.stat-bar{flex:1;height:5px;background:var(--border);border-radius:5px;overflow:hidden}
+.stat-fill{height:100%;border-radius:5px;transition:width .6s ease}
+.sf-orange{background:linear-gradient(90deg,var(--orange),var(--gold))}
+.sf-green{background:linear-gradient(90deg,var(--green),var(--teal))}
+.sf-purple{background:linear-gradient(90deg,var(--purple),var(--neon))}
+.stat-val{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--orange);min-width:34px;text-align:right}
+.gc-inds{margin:.5rem 0}
+.ind{font-size:.88rem;color:var(--ink-dim);padding:.06rem 0 .06rem 1rem;position:relative;line-height:1.45}
+.ind::before{content:'▸';position:absolute;left:0;color:var(--orange);font-size:.75rem}
+.gc-reason{font-size:.9rem;color:var(--ink-muted);line-height:1.5;margin-top:.35rem;font-style:italic}
+.kill-warn{font-size:.88rem;color:var(--gold);line-height:1.4;margin-top:.4rem;padding:.4rem .75rem;background:var(--gold-bg);border-radius:10px;border-left:3px solid var(--gold)}
+
+/* Markets grid */
+.markets-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.6rem 0}
+.mkt-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:.7rem .9rem}
+.mkt-name{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:.2rem}
+.mkt-pick{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--ink)}
+.mkt-odds{font-size:.88rem;font-weight:600;color:var(--orange)}
+.mkt-conf{font-size:.78rem;color:var(--ink-dim)}
+.mkt-card.hot{border-color:var(--orange);background:linear-gradient(135deg,rgba(255,107,0,.08),var(--surface2))}
+.mkt-card.hot .mkt-pick{color:var(--orange)}
+
+/* ══ PLAYER STATS CARD ══ */
+.player-card{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:20px;
+  overflow:hidden;margin-bottom:1rem;animation:fadeUp .35s ease both;
+}
+.pc-header{
+  padding:1.1rem 1.2rem .8rem;
+  background:linear-gradient(135deg,rgba(255,107,0,.1),rgba(147,51,234,.07));
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:.9rem;
+}
+.pc-avatar{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,var(--orange-dim),var(--purple-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;flex-shrink:0;
+}
+.pc-info{}
+.pc-name{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--ink)}
+.pc-team{font-size:.88rem;color:var(--ink-muted);margin-top:.05rem}
+.pc-body{padding:.9rem 1.2rem}
+.stats-row-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.8rem}
+.stat-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:.6rem .5rem;text-align:center}
+.stat-box-val{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--orange)}
+.stat-box-lbl{font-size:.72rem;font-weight:600;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.03em;margin-top:.05rem}
+.stat-box.hi .stat-box-val{color:var(--green)}
+.stat-box.med .stat-box-val{color:var(--teal)}
+.form-bars{display:flex;gap:.35rem;margin-top:.6rem;align-items:flex-end}
+.fb-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;flex:1}
+.fb-bar-wrap{width:100%;height:50px;display:flex;align-items:flex-end;background:var(--surface2);border-radius:6px;overflow:hidden}
+.fb-bar{width:100%;border-radius:6px;transition:height .6s ease}
+.fb-val{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;color:var(--orange)}
+.fb-lbl{font-size:.65rem;color:var(--ink-dim)}
+
+/* ══ SLIPS ══ */
+.slips-grid{display:flex;flex-direction:column;gap:1.1rem}
+@media(min-width:600px){.slips-grid{display:grid;grid-template-columns:1fr 1fr}}
+
+.slip-card{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .45s ease both}
+.slip-card::before{content:'';display:block;height:4px}
+.slip-iron::before{background:linear-gradient(90deg,var(--orange),var(--purple),var(--teal))}
+.slip-value::before{background:linear-gradient(90deg,var(--purple),var(--neon),var(--orange))}
+.slip-head{
+  padding:1.1rem 1.2rem .9rem;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,var(--surface2),var(--surface));
+}
+.slip-badge{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.slip-iron  .slip-badge{color:var(--orange)}
+.slip-value .slip-badge{color:var(--purple)}
+.slip-name{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:var(--ink)}
+.slip-note{font-size:.9rem;color:var(--ink-dim);margin-top:.28rem;line-height:1.4}
+.slip-stake-pill{font-size:.78rem;font-weight:600;padding:.22rem .65rem;border-radius:20px;margin-top:.4rem;display:inline-block}
+.slip-iron  .slip-stake-pill{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(255,107,0,.3)}
+.slip-value .slip-stake-pill{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(147,51,234,.3)}
+.slip-legs{padding:.75rem 1.2rem;flex:1;display:flex;flex-direction:column}
+.slip-leg{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid rgba(42,42,66,.6)}
+.slip-leg:last-child{border-bottom:none}
+.leg-match{font-size:.92rem;font-weight:500;color:var(--ink);line-height:1.3}
+.leg-mkt{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal);white-space:nowrap}
+.leg-odds{font-family:'Syne',sans-serif;font-weight:800;font-size:.92rem;color:var(--orange);text-align:right;min-width:2.2rem}
+.slip-foot{padding:.8rem 1.2rem;background:linear-gradient(180deg,var(--surface2),var(--surface3));border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+.total-lbl{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.04em}
+.total-odds{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;background:var(--hoop-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.slip-ret{font-size:.85rem;font-weight:700;color:var(--green);display:none;align-items:center;gap:.3rem}
+.slip-ret.vis{display:flex}
+.btn-copy{font-size:.82rem;font-weight:600;padding:.32rem .8rem;border-radius:10px;cursor:pointer;background:var(--surface3);border:1.5px solid var(--border);color:var(--ink-dim);transition:all .18s}
+.btn-copy:hover{border-color:var(--orange);color:var(--orange)}
+.btn-copy.cp{border-color:var(--green-dim);color:var(--green)}
+
+/* Target winnings */
+.target-section{margin-top:1.5rem;background:var(--surface);border:1.5px solid var(--border);border-radius:20px;overflow:hidden}
+.target-section::before{content:'';display:block;height:3px;background:var(--hoop-grad)}
+.target-head{padding:1.1rem 1.3rem .9rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(255,107,0,.07),transparent)}
+.target-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;background:var(--hoop-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.target-sub{font-size:.9rem;color:var(--ink-dim);margin-top:.15rem}
+.target-tiers{display:flex;flex-wrap:wrap;gap:.4rem;padding:1rem 1.3rem}
+.tier-btn{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;padding:.38rem .9rem;border-radius:20px;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--ink-dim);transition:all .18s}
+.tier-btn:hover{border-color:var(--orange-dim);color:var(--orange)}
+.tier-btn.ta{background:var(--nba-grad);color:#fff;border-color:transparent;box-shadow:0 4px 16px var(--orange-glow)}
+.t-result{display:none;flex-direction:column;border-top:1px solid var(--border)}
+.t-result.vis{display:flex}
+.tg-bar{padding:.9rem 1.3rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(255,107,0,.07),transparent)}
+.tg-lbl{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;color:var(--orange-dim);text-transform:uppercase;letter-spacing:.04em}
+.tg-range{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;background:var(--hoop-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-top:.1rem}
+.scs-grid{display:grid;grid-template-columns:1fr 1fr}
+.scs{padding:1rem 1.3rem;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:.4rem}
+.scs:last-child{border-right:none}
+.scs-badge{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.scs-iron{color:var(--orange)}.scs-value{color:var(--purple)}
+.scs-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--ink)}
+.scs-odds{font-size:.85rem;color:var(--ink-dim)}
+.scs-lbl{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.03em;margin-top:.2rem}
+.scs-val{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--green)}
+.scs-range{font-size:.82rem;color:var(--ink-muted)}
+.scs-verdict{font-size:.88rem;color:var(--ink-dim);font-style:italic;line-height:1.4;margin-top:.2rem;padding-top:.38rem;border-top:1px solid var(--border)}
+.rec-box{padding:1rem 1.3rem;background:linear-gradient(135deg,rgba(16,185,129,.06),transparent);border-top:1px solid var(--border);display:flex;gap:.7rem}
+.rec-ico{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.rec-title{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;color:var(--green-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.rec-text{font-size:.95rem;color:var(--ink-muted);line-height:1.5}
+.rec-text strong{color:var(--ink);font-style:normal}
+
+/* ══ TODAY SCREEN ══ */
+.league-filter{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.4rem;margin-bottom:1rem;-ms-overflow-style:none;scrollbar-width:none}
+.league-filter::-webkit-scrollbar{display:none}
+.lf-btn{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;padding:.38rem 1rem;border-radius:20px;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--ink-dim);white-space:nowrap;transition:all .18s;flex-shrink:0}
+.lf-btn.active{background:var(--nba-grad);color:#fff;border-color:transparent;box-shadow:0 3px 12px var(--orange-glow)}
+.lf-btn:hover:not(.active){border-color:var(--orange-dim);color:var(--orange)}
+
+/* Live score card */
+.live-card{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:20px;
+  margin-bottom:.85rem;overflow:hidden;animation:fadeUp .35s ease both;
+  transition:border-color .2s,box-shadow .2s;
+}
+.live-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.4)}
+.lc-top{padding:.7rem 1.1rem;background:linear-gradient(135deg,rgba(255,107,0,.07),rgba(147,51,234,.04));border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.lc-league{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim)}
+.lc-status{font-size:.82rem;font-weight:700;padding:.18rem .55rem;border-radius:20px}
+.lc-live{color:var(--green);background:var(--green-bg);border:1px solid rgba(16,185,129,.3);animation:pulse 2s ease-in-out infinite}
+.lc-sched{color:var(--orange);background:var(--orange-bg);border:1px solid rgba(255,107,0,.3)}
+.lc-done{color:var(--ink-dim);background:var(--surface3);border:1px solid var(--border)}
+.lc-body{padding:1rem 1.1rem}
+.lc-matchup{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5rem;margin-bottom:.8rem}
+.lc-team{display:flex;flex-direction:column}
+.lc-team.home{align-items:flex-start}
+.lc-team.away{align-items:flex-end}
+.lc-team-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--ink);line-height:1.2}
+.lc-record{font-size:.8rem;color:var(--ink-dim);margin-top:.1rem}
+.lc-score{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;text-align:center;background:var(--hoop-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.lc-time{font-size:.8rem;color:var(--ink-dim);text-align:center;margin-top:.15rem}
+.lc-markets{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.6rem}
+.lc-mkt{background:var(--surface2);border-radius:10px;padding:.5rem .6rem;text-align:center}
+.lc-mkt-name{font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:.2rem}
+.lc-mkt-val{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--orange)}
+.lc-mkt.edge{border:1px solid rgba(255,107,0,.3);background:linear-gradient(135deg,rgba(255,107,0,.08),var(--surface2))}
+
+/* ══ PLAYER SEARCH ══ */
+.search-row{display:flex;gap:.5rem;margin-bottom:1rem}
+.search-input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:1.05rem;padding:.8rem 1.1rem;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--orange);background:var(--surface3)}
+.search-input::placeholder{color:var(--ink-dim)}
+.btn-search{padding:.8rem 1.3rem;border-radius:14px;border:none;cursor:pointer;background:var(--nba-grad);color:#fff;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;white-space:nowrap;box-shadow:0 4px 16px var(--orange-glow)}
+
+/* ══ HISTORY ══ */
+.hist-empty{color:var(--ink-dim);font-size:1.05rem;text-align:center;padding:3rem 0;font-style:italic}
+.hist-item{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:1rem 1.1rem;margin-bottom:.75rem;cursor:pointer;transition:all .18s;animation:fadeUp .3s ease both}
+.hist-item:hover{border-color:var(--orange-dim);box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.hist-item.htype-v6{border-left:4px solid var(--orange)}
+.hist-item.htype-paste{border-left:4px solid var(--purple)}
+.hi-meta{font-size:.85rem;font-weight:600;color:var(--ink-dim);margin-bottom:.25rem;display:flex;justify-content:space-between;align-items:center}
+.hi-summary{font-size:.95rem;color:var(--ink-muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hi-chips{display:flex;gap:.3rem;margin-top:.5rem;flex-wrap:wrap}
+.btn-del{font-size:.8rem;font-weight:600;padding:.2rem .55rem;border-radius:8px;cursor:pointer;background:var(--red-bg);border:1px solid var(--red-dim);color:var(--red)}
+
+/* Settings */
+.ss-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:16px;padding:1rem 1.2rem;margin-bottom:.7rem}
+.ss-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--ink);margin-bottom:.65rem}
+.ss-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.ss-row:last-child{margin-bottom:0}
+.ss-label{font-size:.95rem;font-weight:500;color:var(--ink-muted)}
+.ss-sub{font-size:.85rem;color:var(--ink-dim);margin-top:.06rem}
+.toggle{position:relative;width:46px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:26px;transition:.3s}
+.tog-sl::before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:var(--ink-dim);border-radius:50%;transition:.3s}
+.toggle input:checked+.tog-sl{background:var(--green-dim)}
+.toggle input:checked+.tog-sl::before{transform:translateX(20px);background:var(--green)}
+.notif-status{font-size:.88rem;font-weight:600;padding:.25rem .7rem;border-radius:20px;display:inline-block;margin-top:.5rem;cursor:pointer}
+.ns-ok{color:var(--green);border:1px solid rgba(16,185,129,.3);background:var(--green-bg)}
+.ns-no{color:var(--red);border:1px solid var(--red-dim);background:var(--red-bg)}
+.ns-def{color:var(--gold);border:1px solid rgba(245,158,11,.3);background:var(--gold-bg)}
+
+@media(max-width:380px){
+  .scs-grid{grid-template-columns:1fr}
+  .scs:first-child{border-right:none;border-bottom:1px solid var(--border)}
+  .stats-row-grid{grid-template-columns:repeat(3,1fr)}
+  .lc-markets{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="spl-inner">
+    <div class="spl-icon">🏀</div>
+    <div class="spl-brand">HoopIQ</div>
+    <div class="spl-tag">Basketball Intelligence</div>
+    <div class="spl-pills">
+      <span class="spl-pill sp-nba">🏀 NBA</span>
+      <span class="spl-pill sp-euro">🌍 EuroLeague</span>
+      <span class="spl-pill sp-live">⚡ Live Stats</span>
+    </div>
+    <div class="spl-bar"><div class="spl-fill" id="spl-fill"></div></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="h-brand">
+    <div class="h-logo">🏀 HoopIQ</div>
+    <div class="h-live-dot"></div>
+  </div>
+  <div class="h-right">
+    <button class="h-btn" id="notif-btn" onclick="goTo('settings')" title="Settings">⚙️</button>
+    <span class="h-badge" id="h-badge" style="display:none">0 saved</span>
+  </div>
+</header>
+
+<!-- SCROLL -->
+<div class="app-scroll" id="app-scroll">
+
+  <!-- ═══ TODAY ═══ -->
+  <div class="screen" id="screen-today">
+    <div class="screen-header">
+      <div class="screen-title">Today's Games</div>
+      <div class="screen-sub">Live & scheduled across all major leagues</div>
+    </div>
+    <div class="league-filter" id="league-filter">
+      <button class="lf-btn active" onclick="setLeagueFilter('all',this)">All Leagues</button>
+      <button class="lf-btn" onclick="setLeagueFilter('NBA',this)">🏀 NBA</button>
+      <button class="lf-btn" onclick="setLeagueFilter('EuroLeague',this)">🌍 EuroLeague</button>
+      <button class="lf-btn" onclick="setLeagueFilter('NCAA',this)">🎓 NCAA</button>
+      <button class="lf-btn" onclick="setLeagueFilter('WNBA',this)">⭐ WNBA</button>
+      <button class="lf-btn" onclick="setLeagueFilter('NBL',this)">🦘 NBL</button>
+      <button class="lf-btn" onclick="setLeagueFilter('ACB',this)">🇪🇸 ACB</button>
+      <button class="lf-btn" onclick="setLeagueFilter('Lega',this)">🇮🇹 Lega</button>
+      <button class="lf-btn" onclick="setLeagueFilter('BSL',this)">🇹🇷 BSL</button>
+    </div>
+    <button class="btn btn-orange" id="btn-today" onclick="fetchToday()">🏀 Fetch Today's Games</button>
+    <div class="loading" id="today-loading" style="margin-top:1rem"><div class="hoop-spinner"></div><div class="load-text">Pulling live data…</div><div class="load-step" id="today-step">Searching StatMuse & ESPN</div></div>
+    <div id="today-results" style="margin-top:1rem"></div>
+  </div>
+
+  <!-- ═══ ANALYSER ═══ -->
+  <div class="screen" id="screen-analyse">
+    <div class="screen-header">
+      <div class="screen-title">🔍 Game Analyser</div>
+      <div class="screen-sub">Deep analysis — form, stats, markets, player impact</div>
+    </div>
+    <div id="an-queued" style="display:none;background:var(--orange-bg);border:1.5px solid rgba(255,107,0,.3);border-radius:14px;padding:.8rem 1rem;margin-bottom:1rem;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--orange)"></div>
+    <div class="itabs">
+      <button class="itab active" id="itab-txt" onclick="switchIT('txt')">✏️ Text</button>
+      <button class="itab" id="itab-img" onclick="switchIT('img')">📷 Screenshot</button>
+    </div>
+    <div class="ipanel active" id="ip-txt">
+      <textarea class="f" id="an-input" placeholder="Enter basketball fixtures:&#10;&#10;Los Angeles Lakers vs Golden State Warriors (NBA)&#10;Real Madrid vs Barcelona (EuroLeague)&#10;Boston Celtics vs Miami Heat (NBA)&#10;&#10;One per line. Include league where possible."></textarea>
+      <p class="hint">AI searches StatMuse, ESPN, Basketball-Reference for current form, H2H, and player stats from the last 5–10 games only. Recent data, not historical averages.</p>
+    </div>
+    <div class="ipanel" id="ip-img">
+      <div id="an-up-empty">
+        <label class="upload-zone" ondragover="dov(event,'an-zone')" ondragleave="dol('an-zone')" ondrop="dod(event,'an')">
+          <input type="file" id="an-img-file" accept="image/*" onchange="imgSel(event,'an')">
+          <span class="uz-icon">📷</span><span class="uz-main">Upload fixture screenshot</span><span class="uz-sub">Gallery · Camera · Files</span>
+        </label>
+        <div class="ua-grid">
+          <label class="ua-btn"><input type="file" accept="image/*" onchange="imgSel(event,'an')"><span class="ua-icon">🖼️</span><span class="ua-txt">Gallery</span></label>
+          <label class="ua-btn"><input type="file" accept="image/*" capture="environment" onchange="imgSel(event,'an')"><span class="ua-icon">📷</span><span class="ua-txt">Camera</span></label>
+          <label class="ua-btn"><input type="file" accept="image/png,image/jpeg,image/webp" onchange="imgSel(event,'an')"><span class="ua-icon">📁</span><span class="ua-txt">Files</span></label>
+        </div>
+      </div>
+      <div class="img-prev" id="an-prev"><img id="an-img-p" src="" alt=""><div class="prev-row"><span class="prev-nm" id="an-fname"></span><div class="prev-btns"><label class="btn-reup"><input type="file" accept="image/*" onchange="imgSel(event,'an')">↺ Change</label><button class="btn-remv" onclick="clrImg('an')">✕</button></div></div></div>
+      <input class="f" id="an-img-note" placeholder="Optional context: e.g. 'NBA Saturday games'" style="margin-top:.7rem;min-height:auto">
+    </div>
+    <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:.95rem;font-weight:500;color:var(--ink-muted);user-select:none;margin-top:.9rem"><input type="checkbox" id="web-tog" checked style="accent-color:var(--orange);width:18px;height:18px;cursor:pointer"><span>Live search (StatMuse, ESPN, Basketball-Reference)</span></label>
+    <button class="btn btn-orange" id="btn-analyse" onclick="runAnalyse()" style="margin-top:.9rem">🔍 Analyse Games</button>
+    <div class="loading" id="an-loading"><div class="hoop-spinner"></div><div class="load-text">Analysing…</div><div class="load-step" id="an-step">Searching StatMuse</div></div>
+    <div class="out-sec" id="an-output">
+      <div class="out-header">
+        <div><div class="out-title">Analysis Ready</div><div class="out-ts" id="an-ts"></div></div>
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+          <div class="stake-row"><span class="stake-lbl">Stake</span><span class="stake-cur">KES</span><input type="number" class="stake-inp" id="an-stake" placeholder="0" min="0" oninput="updRet('an')"></div>
+          <button class="btn-outline" onclick="rstAnalyse()">↩</button>
+        </div>
+      </div>
+      <div id="an-render"></div>
+      <div class="target-section" id="an-target" style="display:none">
+        <div class="target-head"><div class="target-title">🎯 Target Winnings</div><div class="target-sub">Select your goal — exact stake calculated per slip</div></div>
+        <div class="target-tiers">
+          <button class="tier-btn" onclick="selT(this,'an',500,1000)">500–1K</button>
+          <button class="tier-btn" onclick="selT(this,'an',1500,3500)">1.5K–3.5K</button>
+          <button class="tier-btn" onclick="selT(this,'an',4000,7500)">4K–7.5K</button>
+          <button class="tier-btn" onclick="selT(this,'an',8000,12000)">8K–12K</button>
+          <button class="tier-btn" onclick="selT(this,'an',15000,25000)">15K–25K</button>
+          <button class="tier-btn" onclick="selT(this,'an',35000,70000)">35K–70K</button>
+          <button class="tier-btn" onclick="selT(this,'an',90000,200000)">90K–200K</button>
+          <button class="tier-btn" onclick="selT(this,'an',300000,500000)">300K–500K</button>
+          <button class="tier-btn" onclick="selT(this,'an',700000,1300000)">700K–1.3M</button>
+          <button class="tier-btn" onclick="selT(this,'an',1500000,3000000)">1.5M+</button>
+        </div>
+        <div class="t-result" id="an-t-res">
+          <div class="tg-bar"><div class="tg-lbl">Your target</div><div class="tg-range" id="an-tg-range">–</div></div>
+          <div class="scs-grid" id="an-scs-grid"></div>
+          <div class="rec-box" id="an-rec-box"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PLAYERS ═══ -->
+  <div class="screen" id="screen-players">
+    <div class="screen-header">
+      <div class="screen-title">📊 Player Stats</div>
+      <div class="screen-sub">Current form — last 5–10 games only. Points, rebounds, assists, 3s, 2s.</div>
+    </div>
+    <div class="search-row">
+      <input class="search-input" type="text" id="player-search" placeholder="e.g. LeBron James, Giannis, Curry..." oninput="if(this.value.length>2)clearTimeout(window._ps);window._ps=setTimeout(function(){},500)" onkeydown="if(event.key==='Enter')fetchPlayer()">
+      <button class="btn-search" onclick="fetchPlayer()">Search</button>
+    </div>
+    <div class="hint" style="margin-bottom:1rem">Searches StatMuse, ESPN, and Basketball-Reference for recent performance. Data is from the current season, last 10 games.</div>
+    <div class="loading" id="pl-loading"><div class="hoop-spinner"></div><div class="load-text">Searching player stats…</div><div class="load-step" id="pl-step">Checking StatMuse</div></div>
+    <div id="pl-results"></div>
+  </div>
+
+  <!-- ═══ PASTE ═══ -->
+  <div class="screen" id="screen-paste">
+    <div class="screen-header">
+      <div class="screen-title">📋 Paste & Analyse</div>
+      <div class="screen-sub">Paste predictions from BetMines, scores24, or any source → Iron + Value slips instantly.</div>
+    </div>
+    <div style="display:flex;gap:.4rem;margin-bottom:.9rem;flex-wrap:wrap">
+      <button class="lf-btn active" id="src-bm" onclick="setSrc('bm')">BetMines</button>
+      <button class="lf-btn" id="src-s24" onclick="setSrc('s24')">scores24</button>
+      <button class="lf-btn" id="src-espn" onclick="setSrc('espn')">ESPN picks</button>
+      <button class="lf-btn" id="src-oth" onclick="setSrc('oth')">Other</button>
+    </div>
+    <div class="itabs">
+      <button class="itab active" id="ptab-txt" onclick="switchPT('txt')">✏️ Paste Text</button>
+      <button class="itab" id="ptab-img" onclick="switchPT('img')">📷 Screenshot</button>
+    </div>
+    <div class="ipanel active" id="pp-txt">
+      <textarea class="f" id="paste-input" placeholder="Paste basketball predictions here:&#10;&#10;Lakers vs Warriors | Over 224.5 | 78%&#10;Celtics vs Heat | Home Win | 82%&#10;Real Madrid vs Barcelona | Over 165.5 | 85%&#10;&#10;Any format works — HoopIQ extracts them all."></textarea>
+    </div>
+    <div class="ipanel" id="pp-img">
+      <div id="paste-up-empty">
+        <label class="upload-zone" ondragover="dov(event,'paste-zone')" ondragleave="dol('paste-zone')" ondrop="dod(event,'paste')">
+          <input type="file" id="paste-img-file" accept="image/*" onchange="imgSel(event,'paste')">
+          <span class="uz-icon">📷</span><span class="uz-main">Screenshot of predictions</span><span class="uz-sub">Gallery · Camera · Files</span>
+        </label>
+      </div>
+      <div class="img-prev" id="paste-prev"><img id="paste-img-p" src="" alt=""><div class="prev-row"><span class="prev-nm" id="paste-fname"></span><div class="prev-btns"><label class="btn-reup"><input type="file" accept="image/*" onchange="imgSel(event,'paste')">↺</label><button class="btn-remv" onclick="clrImg('paste')">✕</button></div></div></div>
+    </div>
+    <button class="btn btn-purple" id="btn-paste" onclick="runPaste()" style="margin-top:.9rem">📋 Extract & Build Slips</button>
+    <div class="loading" id="paste-loading"><div class="hoop-spinner"></div><div class="load-text">Building slips…</div><div class="load-step" id="paste-step">Extracting fixtures</div></div>
+    <div class="out-sec" id="paste-output">
+      <div class="out-header">
+        <div><div class="out-title">Slips Ready</div><div class="out-ts" id="paste-ts"></div></div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <div class="stake-row"><span class="stake-lbl">Stake</span><span class="stake-cur">KES</span><input type="number" class="stake-inp" id="paste-stake" placeholder="0" min="0" oninput="updRet('paste')"></div>
+          <button class="btn-outline" onclick="rstPaste()">↩</button>
+        </div>
+      </div>
+      <div id="paste-render"></div>
+    </div>
+  </div>
+
+  <!-- ═══ SETTINGS ═══ -->
+  <div class="screen" id="screen-settings">
+    <div class="screen-header">
+      <div class="screen-title">⚙️ Settings</div>
+    </div>
+    <div class="ss-card">
+      <div class="ss-title">🔑 Anthropic API Key</div>
+      <div class="ss-row"><div><div class="ss-label">API Key status</div><div class="ss-sub" id="key-status-txt">Not set</div></div><button class="btn-outline" onclick="changeKey()" style="font-size:.88rem;padding:.38rem .85rem">Change</button></div>
+      <p class="hint" style="margin-top:.4rem">Your key is saved only on this device. Get yours free at console.anthropic.com → API Keys</p>
+    </div>
+    <div class="ss-card">
+      <div class="ss-title">🔔 Daily Game Alerts</div>
+      <div class="ss-row"><div><div class="ss-label">Enable notifications</div><div class="ss-sub">Daily reminder to check today's games</div></div><label class="toggle"><input type="checkbox" id="notif-tog" onchange="togNotif(this)"><span class="tog-sl"></span></label></div>
+      <div class="ss-row" style="margin-top:.4rem"><div class="ss-label">Alert time</div><input type="time" id="notif-time" value="08:00" onchange="setNTime(this.value)" style="background:var(--surface3);border:1.5px solid var(--border);border-radius:10px;color:var(--ink);font-size:.95rem;padding:.38rem .7rem;outline:none;width:110px"></div>
+      <div id="notif-status-el" style="margin-top:.5rem"></div>
+    </div>
+    <div class="ss-card">
+      <div class="ss-title">📊 Analysis History</div>
+      <div class="ss-row"><div class="ss-label" id="hist-count-lbl">0 saved</div><button class="btn-outline" onclick="clearHist()" style="font-size:.88rem;padding:.38rem .85rem">Clear All</button></div>
+      <div id="hist-list-mini"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-items">
+    <button class="nav-item" id="nav-today"    onclick="goTo('today')"><div class="nav-icon">🏀</div><span class="nav-lbl">Today</span></button>
+    <button class="nav-item" id="nav-analyse"  onclick="goTo('analyse')"><div class="nav-icon">🔍</div><span class="nav-lbl">Analyse</span></button>
+    <button class="nav-item" id="nav-players"  onclick="goTo('players')"><div class="nav-icon">📊</div><span class="nav-lbl">Players</span></button>
+    <button class="nav-item" id="nav-paste"    onclick="goTo('paste')"><div class="nav-icon">📋</div><span class="nav-lbl">Paste</span></button>
+    <button class="nav-item" id="nav-settings" onclick="goTo('settings')"><div class="nav-icon">⚙️</div><span class="nav-lbl">Settings</span><span class="nav-bdg" id="hist-bdg">0</span></button>
+  </div>
+</nav>
+
+<script>
+// ══ STATE ══
+var IMG={an:{b64:null,type:'image/jpeg'},paste:{b64:null,type:'image/jpeg'}};
+var iTab='txt',pTab='txt',activeSrc='bm',activeLeague='all';
+var stepInt=null,progTimer=null;
+var queuedGames=[];
+var HIST=[];
+var API_KEY='__ANTHROPIC_API_KEY__';
+var notifEnabled=false,notifTime='08:00';
+
+// ══ INIT ══
+window.addEventListener('load',function(){
+  var fill=document.getElementById('spl-fill');
+  setTimeout(function(){fill.style.width='100%';},80);
+  setTimeout(function(){
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(function(){document.getElementById('splash').style.display='none';},520);
+    goTo('today');
+    loadData();
+    if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function(){});
+  },1700);
+});
+
+function loadData(){
+  try{HIST=JSON.parse(localStorage.getItem('hiq-hist')||'[]');}catch(e){HIST=[];}
+  var k=localStorage.getItem('hiq-key');if(k)API_KEY=k;
+  try{var s=JSON.parse(localStorage.getItem('hiq-notif')||'{}');notifEnabled=s.enabled||false;notifTime=s.time||'08:00';}catch(e){}
+  updBadge();updKeyStatus();updNotifStatus();
+  if(notifEnabled&&Notification.permission==='granted')schedNotif();
+}
+function saveHist(){try{localStorage.setItem('hiq-hist',JSON.stringify(HIST.slice(0,20)));}catch(e){}updBadge();}
+function addHist(d,ts,type){HIST.unshift({d:d,ts:ts,type:type||'an'});if(HIST.length>20)HIST.pop();saveHist();}
+function updBadge(){var b=document.getElementById('hist-bdg');var hb=document.getElementById('h-badge');var hl=document.getElementById('hist-count-lbl');if(b){b.textContent=HIST.length;b.classList.toggle('show',HIST.length>0);}if(hb){hb.style.display=HIST.length?'':'none';hb.textContent=HIST.length+' saved';}if(hl)hl.textContent=HIST.length+' saved';}
+function updKeyStatus(){var el=document.getElementById('key-status-txt');if(el)el.textContent=API_KEY?'✓ Key set: ···'+API_KEY.slice(-8):'Not set — tap Change to add your key';}
+function changeKey(){var k=prompt('Enter your Anthropic API key\n(starts with sk-ant-):');if(k&&k.trim().length>20){API_KEY=k.trim();localStorage.setItem('hiq-key',API_KEY);updKeyStatus();alert('API key saved!');}else if(k){alert('That doesn\'t look right. Key should start with sk-ant-');}}
+function clearHist(){if(!HIST.length||!confirm('Clear all '+HIST.length+' saved analyses?'))return;HIST=[];saveHist();renderHistMini();}
+
+// ══ NOTIFICATIONS ══
+function togNotif(el){notifEnabled=el.checked;if(notifEnabled&&Notification.permission!=='granted'){el.checked=false;notifEnabled=false;reqNotif();}else{saveNotif();if(notifEnabled)schedNotif();}updNotifStatus();}
+function setNTime(v){notifTime=v;saveNotif();if(notifEnabled)schedNotif();}
+function saveNotif(){localStorage.setItem('hiq-notif',JSON.stringify({enabled:notifEnabled,time:notifTime}));}
+function schedNotif(){if(!notifEnabled||Notification.permission!=='granted')return;var p=notifTime.split(':');var h=parseInt(p[0]),m=parseInt(p[1]);var now=new Date();var next=new Date(now);next.setHours(h,m,0,0);if(next<=now)next.setDate(next.getDate()+1);setTimeout(function(){new Notification('HoopIQ 🏀',{body:"Today's basketball games are ready to analyse!",icon:'./icon-192.png',tag:'hiq-daily'});schedNotif();},next-now);}
+async function reqNotif(){if(!('Notification' in window)){alert('Not supported.');return;}var p=await Notification.requestPermission();if(p==='granted'){notifEnabled=true;saveNotif();schedNotif();new Notification('HoopIQ 🏀',{body:'Daily game alerts enabled at '+notifTime+'!',icon:'./icon-192.png'});}var el=document.getElementById('notif-tog');if(el)el.checked=notifEnabled;updNotifStatus();}
+function updNotifStatus(){
+  var el=document.getElementById('notif-status-el');if(!el)return;
+  var tog=document.getElementById('notif-tog');if(tog)tog.checked=notifEnabled;
+  var p='Notification' in window?Notification.permission:'unsupported';
+  var cls=p==='granted'?'ns-ok':p==='denied'?'ns-no':'ns-def';
+  var txt=p==='granted'?'✓ Notifications enabled':p==='denied'?'✕ Blocked — check browser settings':'Tap here to enable';
+  el.innerHTML='<span class="notif-status '+cls+'" onclick="reqNotif()">'+txt+'</span>';
+}
+
+// ══ NAV ══
+function goTo(s){
+  document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(x){x.classList.remove('active');});
+  var sc=document.getElementById('screen-'+s),nv=document.getElementById('nav-'+s);
+  if(sc)sc.classList.add('active');if(nv)nv.classList.add('active');
+  document.getElementById('app-scroll').scrollTop=0;
+  if(s==='settings'){renderHistMini();updNotifStatus();}
+}
+
+// ══ PROGRESS ══
+function startProg(){var b=document.getElementById('prog');b.classList.add('on');b.style.width='0%';var w=0;progTimer=setInterval(function(){w=w+(88-w)*.042;b.style.width=w+'%';},380);}
+function endProg(){clearInterval(progTimer);var b=document.getElementById('prog');b.style.width='100%';setTimeout(function(){b.classList.remove('on');b.style.width='0%';},500);}
+
+// ══ STEPS ══
+var TODAY_S=['Searching StatMuse for today\'s games…','Pulling ESPN schedule…','Fetching scores24.live…','Checking live scores…','Computing team form…','Building game cards…'];
+var AN_S=['Searching StatMuse for team form…','Pulling last 5–10 game stats…','Checking ESPN injury report…','Searching Basketball-Reference H2H…','Fetching player impact data…','Analysing quarter/half stats…','Building Iron Slip…','Building Value Slip…','Verifying odds…'];
+var PL_S=['Searching StatMuse player stats…','Pulling ESPN profile…','Computing last 10 game form…','Building stat card…'];
+var PS_S=['Extracting fixtures…','Profiling each game…','Building slips…'];
+function cyc(id,steps){var i=0;var el=document.getElementById(id);if(!el)return;el.style.opacity='1';el.textContent=steps[0];stepInt=setInterval(function(){el.style.opacity='0';setTimeout(function(){i=(i+1)%steps.length;el.textContent=steps[i];el.style.opacity='1';},280);},2500);}
+function stopCyc(){if(stepInt){clearInterval(stepInt);stepInt=null;}}
+
+// ══ IMAGE ══
+function imgSel(e,ns){var f=e.target.files&&e.target.files[0];if(!f)return;loadImg(f,ns);try{e.target.value='';}catch(er){}}
+function loadImg(f,ns){
+  IMG[ns].type=f.type||'image/jpeg';
+  var r=new FileReader();
+  r.onload=function(ev){
+    IMG[ns].b64=ev.target.result.split(',')[1];
+    var pw=document.getElementById(ns+'-prev');
+    var pi=document.getElementById(ns+'-img-p');
+    var pf=document.getElementById(ns+'-fname');
+    if(pw)pw.classList.add('vis');
+    if(pi)pi.src=ev.target.result;
+    if(pf)pf.textContent=f.name;
+    var eu=document.getElementById(ns+'-up-empty')||document.getElementById(ns+'up-empty');
+    if(ns==='an'&&document.getElementById('an-up-empty'))document.getElementById('an-up-empty').style.display='none';
+    if(ns==='paste'&&document.getElementById('paste-up-empty'))document.getElementById('paste-up-empty').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+function clrImg(ns){
+  IMG[ns].b64=null;IMG[ns].type='image/jpeg';
+  var pw=document.getElementById(ns+'-prev');if(pw)pw.classList.remove('vis');
+  var pi=document.getElementById(ns+'-img-p');if(pi)pi.src='';
+  var pf=document.getElementById(ns+'-fname');if(pf)pf.textContent='';
+  if(ns==='an'&&document.getElementById('an-up-empty'))document.getElementById('an-up-empty').style.display='block';
+  if(ns==='paste'&&document.getElementById('paste-up-empty'))document.getElementById('paste-up-empty').style.display='block';
+}
+function dov(e,id){e.preventDefault();e.stopPropagation();var el=document.getElementById(id);if(el)el.classList.add('drag-over');}
+function dol(id){var el=document.getElementById(id);if(el)el.classList.remove('drag-over');}
+function dod(e,ns){e.preventDefault();e.stopPropagation();var f=e.dataTransfer&&e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadImg(f,ns);}
+
+// ══ TABS ══
+function switchIT(t){iTab=t;['txt','img'].forEach(function(k){document.getElementById('itab-'+k).classList.toggle('active',k===t);document.getElementById('ip-'+k).classList.toggle('active',k===t);});}
+function switchPT(t){pTab=t;document.getElementById('ptab-txt').classList.toggle('active',t==='txt');document.getElementById('ptab-img').classList.toggle('active',t==='img');document.getElementById('pp-txt').classList.toggle('active',t==='txt');document.getElementById('pp-img').classList.toggle('active',t==='img');}
+function setSrc(s){activeSrc=s;['bm','s24','espn','oth'].forEach(function(k){var el=document.getElementById('src-'+k);if(el)el.classList.toggle('active',k===s)});}
+function setLeagueFilter(l,btn){activeLeague=l;document.querySelectorAll('.lf-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');filterTodayCards();}
+function filterTodayCards(){document.querySelectorAll('.live-card').forEach(function(c){var lg=c.dataset.league||'';c.style.display=(activeLeague==='all'||lg.includes(activeLeague))?'':'none';});}
+
+// ══ API ══
+async function api(system,userContent,useSearch){
+  if(!API_KEY){var k=prompt('Enter your Anthropic API key (sk-ant-...):');if(k&&k.trim().length>20){API_KEY=k.trim();localStorage.setItem('hiq-key',API_KEY);updKeyStatus();}else{throw new Error('No API key. Go to ⚙️ Settings to add your key.');}}
+  var body={model:'claude-sonnet-4-20250514',max_tokens:6000,messages:[{role:'user',content:userContent}]};
+  if(system)body.system=system;
+  if(useSearch)body.tools=[{type:'web_search_20250305',name:'web_search'}];
+  var res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':API_KEY,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+      'anthropic-beta':'interleaved-thinking-2025-05-14'
+    },
+    body:JSON.stringify(body)
+  });
+  if(!res.ok){var err=await res.json().catch(function(){return{};});throw new Error((err.error&&err.error.message)||'API error '+res.status);}
+  var data=await res.json();
+  return (data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text||'';}).join('');
+}
+function jp(raw){try{var c=raw.replace(/```json\s*/gi,'').replace(/```/g,'').trim();var m=c.match(/\{[\s\S]*\}/);if(m)return JSON.parse(m[0]);}catch(e){}return null;}
+function vo(p){if(!p||!p.slips)return;['iron','value'].forEach(function(k){var s=p.slips[k];if(s&&s.legs&&s.legs.length){var pr=s.legs.reduce(function(a,l){return a*(parseFloat(l.odds)||1);},1);s.totalOdds=Math.round(pr*100)/100;}});}
+function makeTS(){return new Date().toLocaleString('en-KE',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}
+
+// ══ SYSTEM PROMPTS ══
+var SYS_TODAY=`You are HoopIQ — basketball intelligence AI. Search for today's basketball games across NBA, EuroLeague, NCAA, WNBA, NBL Australia, ACB Spain, Lega Basket Italy, Turkish BSL, Greek Basket, FIBA competitions.
+
+For each game found, search StatMuse and ESPN for:
+- Current season form (last 5 games only — not season averages)
+- Home/away record (last 5 home/away games)
+- Key player recent stats (last 5 games)
+- Points totals in recent games (for Over/Under context)
+
+Return JSON only:
+{"games":[{
+  "league":"NBA",
+  "homeTeam":"Lakers",
+  "awayTeam":"Warriors",
+  "time":"19:30 ET",
+  "status":"scheduled",
+  "homeRecord":"3-2 last 5",
+  "awayRecord":"4-1 last 5",
+  "homeAvgPts":115.4,
+  "awayAvgPts":118.2,
+  "h2h":"Warriors lead H2H 3-1 last 4",
+  "overUnderLine":224.5,
+  "prediction":"Over 224.5",
+  "predictionConf":78,
+  "keyPlayer":{"name":"Steph Curry","team":"Warriors","pts":29.4,"reb":5.2,"ast":6.1,"threes":4.8,"last5":"31,28,24,33,29"},
+  "markets":[
+    {"name":"Full Game O/U","pick":"Over 224.5","odds":1.90,"conf":78},
+    {"name":"1H Over","pick":"Over 112","odds":1.88,"conf":72},
+    {"name":"1H Winner","pick":"Warriors","odds":1.75,"conf":68},
+    {"name":"Q1 Over","pick":"Over 56","odds":1.85,"conf":65},
+    {"name":"Team Total HM","pick":"Lakers Over 110","odds":1.92,"conf":71}
+  ]
+}]}`;
+
+var SYS_AN=`You are HoopIQ — precision basketball betting analyst for William Gachanja. Use web search to pull RECENT data only (last 5–10 games, not season or career averages) from StatMuse, ESPN, Basketball-Reference, and scores24.live.
+
+For each fixture, search and extract:
+1. TEAM FORM: Last 5 games results, points scored, points conceded — HOME and AWAY splits separately
+2. H2H: Last 5 meetings — total points, winner, margins
+3. PLAYER IMPACT: Top 3 players per team — last 5 games stats: points, rebounds, assists, 3-pointers made, 2-pointers made, minutes
+4. INJURY REPORT: Current active injuries and suspensions
+5. PACE & STYLE: Fast/slow pace teams, defensive rating last 5 games
+6. MARKET ANALYSIS: For each game, analyse:
+   - Full game Over/Under
+   - 1st Half Over/Under and Winner
+   - 2nd Half Over/Under and Winner
+   - Q1, Q2, Q3, Q4 Overs
+   - Team totals
+
+RULES:
+- Only select markets where you have 3+ strong recent indicators
+- Do NOT use season averages — only last 5–10 games data
+- Be explicit about which StatMuse/ESPN search you found the data from
+- Iron Slip: 3–5 legs, highest confidence markets only (Over/Under or dominant team wins)
+- Value Slip: 5–8 legs, extends Iron with calculated risks
+- Confidence score 1–5 per market
+- totalOdds = exact product of all leg odds
+
+JSON output:
+{"summary":"...",
+"games":[{
+  "match":"Team A vs Team B",
+  "league":"NBA",
+  "tier":"A",
+  "homeForm":{"last5":"W L W W W","avgPts":118.4,"avgAllowed":108.2,"last5pts":[122,108,115,130,117]},
+  "awayForm":{"last5":"W W L W W","avgPts":121.2,"avgAllowed":112.0,"last5pts":[118,125,105,128,130]},
+  "h2h":"4 of last 5 went Over. Home team won 3 of 5.",
+  "keyPlayers":[
+    {"name":"LeBron James","team":"Lakers","last5avg":{"pts":26.4,"reb":8.2,"ast":7.1,"threes":1.8,"twos":9.4},"formTrend":"Hot — 30+ in last 3"},
+    {"name":"Steph Curry","team":"Warriors","last5avg":{"pts":29.4,"reb":5.2,"ast":6.1,"threes":4.8,"twos":5.2},"formTrend":"Elite form"}
+  ],
+  "injuries":"Klay Thompson (knee, probable). No other key injuries.",
+  "paceRating":"High-pace. Both teams top-10 pace this season.",
+  "confidence":4,
+  "markets":[
+    {"name":"Full Game Over 224.5","pick":"Over","odds":1.90,"confidence":4,"indicators":["4/5 H2H went Over","Both teams avg 118+ last 5","Fast pace matchup","No major injuries"]},
+    {"name":"1st Half Over 112","pick":"Over","odds":1.88,"confidence":4,"indicators":["3/5 H2H 1H went Over","Both teams score 58+ in Q1-Q2 avg"]},
+    {"name":"1st Half Winner","pick":"Warriors","odds":1.75,"confidence":3,"indicators":["Warriors lead 1H in 4/5 last 5 games"]},
+    {"name":"Q1 Over 56","pick":"Over","odds":1.85,"confidence":3,"indicators":["High pace start expected","Both teams push tempo early"]}
+  ],
+  "reason":"High-scoring matchup confirmed by recent form. Over is strongly supported.",
+  "whatKillsThis":"A defensive adjustment or slow start kills the Over. But 4/5 H2H went Over, low risk."
+}],
+"slips":{
+  "iron":{"legs":[{"match":"Lakers vs Warriors","market":"Full Game Over 224.5","odds":1.90}],"totalOdds":5.42,"notes":"High-confidence Overs only","stakeAdvice":"Main stake"},
+  "value":{"legs":[{"match":"Lakers vs Warriors","market":"Full Game Over 224.5","odds":1.90}],"totalOdds":14.80,"notes":"Extends Iron with 1H markets","stakeAdvice":"30-40% of Iron"}
+},
+"removedCount":1,"removedSummary":"1 game cut: insufficient recent data"}`;
+
+var SYS_PASTE=`You are HoopIQ. Extract all basketball fixtures from the pasted data and apply full analysis: profile each game, build Iron (3-5 legs) and Value (5-8 legs) slips. Focus on Over/Under, 1H markets, and dominant favourites. totalOdds = exact product. Same JSON format.`;
+
+var SYS_PLAYER=`You are HoopIQ. Search StatMuse, ESPN, and Basketball-Reference for the basketball player's RECENT stats — last 10 games only, not career or season averages.
+
+Return JSON:
+{"player":{"name":"Player Name","team":"Team","position":"PG","league":"NBA"},
+"last10avg":{"pts":26.4,"reb":7.8,"ast":6.2,"threes":3.2,"twos":8.4,"stl":1.2,"blk":0.4,"to":2.8,"min":35.4},
+"last5games":[
+  {"date":"Mar 20","opp":"vs BOS","pts":31,"reb":9,"ast":7,"threes":4,"twos":10,"result":"W","plusMinus":"+12"},
+  {"date":"Mar 18","opp":"@ MIA","pts":24,"reb":6,"ast":5,"threes":2,"twos":8,"result":"L","plusMinus":"-5"}
+],
+"formTrend":"Hot — averaging 28.6 pts in last 5",
+"injuries":"Healthy. No injury concerns.",
+"bettingNotes":"Averaging 3.2 threes in last 10 — strong 3+ threes prop candidate. Points prop trending up.",
+"propSuggestions":[
+  {"prop":"Points Over 25.5","confidence":72,"reason":"Avg 26.4 last 10, hit 25+ in 7 of last 10"},
+  {"prop":"Assists Over 6.5","confidence":65,"reason":"Avg 6.2 assists, 3+ games over 7 assists recently"}
+]}`;
+
+// ══ TODAY ══
+async function fetchToday(){
+  var btn=document.getElementById('btn-today');btn.disabled=true;btn.innerHTML='🏀 Fetching…';
+  var rl=document.getElementById('today-results');rl.innerHTML='';
+  document.getElementById('today-loading').classList.add('on');
+  startProg();cyc('today-step',TODAY_S);
+  var today=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  try{
+    var raw=await api(SYS_TODAY,'Today is '+today+'. Find all basketball games scheduled today across NBA, EuroLeague, NCAA, WNBA, NBL, ACB, Lega Basket, Turkish BSL. For each game pull last 5 game form and predict markets.',true);
+    stopCyc();endProg();
+    document.getElementById('today-loading').classList.remove('on');
+    var parsed=jp(raw);
+    if(parsed&&parsed.games&&parsed.games.length){renderTodayCards(parsed.games);}
+    else{rl.innerHTML='<div style="color:var(--ink-dim);font-size:1rem;text-align:center;padding:2rem 0">No games found for today. Try again in a moment.</div>';}
+  }catch(err){
+    stopCyc();endProg();
+    document.getElementById('today-loading').classList.remove('on');
+    rl.innerHTML='<div class="error-card">⚠️ '+escH(err.message)+'</div>';
+  }
+  btn.disabled=false;btn.innerHTML='🏀 Refresh Games';
+}
+
+function renderTodayCards(games){
+  var c=document.getElementById('today-results');c.innerHTML='';
+  games.forEach(function(g,i){
+    var card=document.createElement('div');card.className='live-card';card.dataset.league=g.league||'';card.style.animationDelay=(i*.06)+'s';
+    var statusCls=g.status==='live'?'lc-live':g.status==='final'?'lc-done':'lc-sched';
+    var statusTxt=g.status==='live'?'● LIVE':g.status==='final'?'Final':g.time||'Scheduled';
+    var score=g.status==='live'||g.status==='final'?(g.homeScore||'–')+' – '+(g.awayScore||'–'):'vs';
+    var mkts=(g.markets||[]).slice(0,3).map(function(m){return'<div class="lc-mkt'+(m.conf>=75?' edge':'')+'"><div class="lc-mkt-name">'+escH(m.name)+'</div><div class="lc-mkt-val">'+escH(m.pick)+'</div></div>';}).join('');
+    card.innerHTML='<div class="lc-top"><span class="lc-league">'+escH(g.league||'')+'</span><span class="lc-status '+statusCls+'">'+statusTxt+'</span></div>'+
+      '<div class="lc-body">'+
+        '<div class="lc-matchup">'+
+          '<div class="lc-team home"><div class="lc-team-name">'+escH(g.homeTeam||'')+'</div><div class="lc-record">'+escH(g.homeRecord||'')+'</div></div>'+
+          '<div><div class="lc-score">'+score+'</div><div class="lc-time">'+escH(g.h2h||'')+'</div></div>'+
+          '<div class="lc-team away"><div class="lc-team-name">'+escH(g.awayTeam||'')+'</div><div class="lc-record">'+escH(g.awayRecord||'')+'</div></div>'+
+        '</div>'+
+        (mkts?'<div class="lc-markets">'+mkts+'</div>':'')+
+      '</div>';
+    // Tap to send to analyser
+    card.addEventListener('click',function(){
+      document.getElementById('an-input').value=(g.homeTeam||'')+(g.awayTeam?' vs '+g.awayTeam:'')+(g.league?' ('+g.league+')':'');
+      document.getElementById('an-queued').style.display='block';
+      document.getElementById('an-queued').textContent='⚡ '+g.homeTeam+' vs '+g.awayTeam+' queued for analysis';
+      goTo('analyse');switchIT('txt');
+    });
+    c.appendChild(card);
+  });
+  filterTodayCards();
+}
+
+// ══ ANALYSER ══
+async function runAnalyse(){
+  var useSearch=document.getElementById('web-tog').checked;
+  var uc;
+  if(iTab==='img'){
+    if(!IMG.an.b64){alert('Please select a screenshot first.');return;}
+    var note=document.getElementById('an-img-note').value.trim();
+    uc=[{type:'image',source:{type:'base64',media_type:IMG.an.type,data:IMG.an.b64}},{type:'text',text:'Extract all basketball fixtures visible. Pull recent stats from StatMuse/ESPN and build Iron + Value slips.'+(note?'\nContext: '+note:'')}];
+  }else{
+    var inp=document.getElementById('an-input').value.trim();if(!inp){alert('Enter fixtures first.');return;}
+    uc='Search StatMuse and ESPN for recent form data (last 5-10 games only) for each team in these fixtures. Build Iron + Value slips.\n\n'+inp;
+  }
+  document.getElementById('btn-analyse').disabled=true;
+  document.getElementById('an-loading').classList.add('on');
+  document.getElementById('an-output').classList.remove('on');
+  document.getElementById('an-render').innerHTML='';
+  document.getElementById('an-target').style.display='none';
+  startProg();cyc('an-step',AN_S);
+  try{
+    var raw=await api(SYS_AN,uc,useSearch);
+    stopCyc();endProg();
+    document.getElementById('an-loading').classList.remove('on');
+    document.getElementById('btn-analyse').disabled=false;
+    document.getElementById('an-output').classList.add('on');
+    var parsed=jp(raw);if(parsed)vo(parsed);
+    var ts=makeTS();document.getElementById('an-ts').textContent=ts;
+    if(parsed&&parsed.games&&parsed.slips){addHist(parsed,ts,'an');renderOutput('an-render',parsed,'an');document.getElementById('an-target').style.display='block';}
+    else if(raw)renderFb('an-render',raw);
+    document.getElementById('an-queued').style.display='none';
+    document.getElementById('app-scroll').scrollTop=0;
+  }catch(err){
+    stopCyc();endProg();
+    document.getElementById('an-loading').classList.remove('on');
+    document.getElementById('btn-analyse').disabled=false;
+    document.getElementById('an-output').classList.add('on');
+    document.getElementById('an-render').innerHTML='<div class="error-card">⚠️ '+escH(err.message)+'</div>';
+  }
+}
+function rstAnalyse(){document.getElementById('an-output').classList.remove('on');document.getElementById('btn-analyse').disabled=false;document.getElementById('an-input').value='';document.getElementById('an-render').innerHTML='';document.getElementById('an-target').style.display='none';document.getElementById('an-stake').value='';clrImg('an');document.getElementById('app-scroll').scrollTop=0;}
+
+// ══ PLAYER SEARCH ══
+async function fetchPlayer(){
+  var name=document.getElementById('player-search').value.trim();if(!name){alert('Enter a player name.');return;}
+  var res=document.getElementById('pl-results');res.innerHTML='';
+  document.getElementById('pl-loading').classList.add('on');
+  startProg();cyc('pl-step',PL_S);
+  try{
+    var raw=await api(SYS_PLAYER,'Search StatMuse, ESPN, and Basketball-Reference for this player\'s recent stats (last 10 games only): '+name,true);
+    stopCyc();endProg();
+    document.getElementById('pl-loading').classList.remove('on');
+    var parsed=jp(raw);
+    if(parsed&&parsed.player)renderPlayerCard(parsed);
+    else{res.innerHTML='<div class="error-card">Could not find recent stats for "'+escH(name)+'". Try their full name, e.g. "LeBron James".</div>';}
+  }catch(err){
+    stopCyc();endProg();
+    document.getElementById('pl-loading').classList.remove('on');
+    res.innerHTML='<div class="error-card">⚠️ '+escH(err.message)+'</div>';
+  }
+}
+
+function renderPlayerCard(d){
+  var c=document.getElementById('pl-results');c.innerHTML='';
+  var p=d.player||{};var avg=d.last10avg||{};var games=d.last5games||[];
+  var card=document.createElement('div');card.className='player-card';card.style.animation='fadeUp .35s ease both';
+  var statBoxes=[
+    {val:avg.pts||0,lbl:'PTS',cls:''},
+    {val:avg.reb||0,lbl:'REB',cls:'hi'},
+    {val:avg.ast||0,lbl:'AST',cls:'med'},
+    {val:avg.threes||0,lbl:'3PM',cls:''},
+    {val:avg.twos||0,lbl:'2PM',cls:'hi'},
+    {val:avg.stl||0,lbl:'STL',cls:'med'},
+    {val:avg.blk||0,lbl:'BLK',cls:''},
+    {val:avg.min||0,lbl:'MIN',cls:''}
+  ];
+  var sbHtml=statBoxes.map(function(s){return'<div class="stat-box '+s.cls+'"><div class="stat-box-val">'+parseFloat(s.val).toFixed(1)+'</div><div class="stat-box-lbl">'+s.lbl+'</div></div>';}).join('');
+  // Form bars for points last 5 games
+  var pts5=games.slice(0,5).map(function(g){return parseFloat(g.pts)||0;});
+  var maxPts=Math.max.apply(null,pts5.concat([1]));
+  var fbHtml=games.slice(0,5).map(function(g,i){
+    var h=(parseFloat(g.pts)||0)/maxPts*100;
+    var bg=h>70?'linear-gradient(180deg,var(--orange),var(--gold))':h>50?'linear-gradient(180deg,var(--teal),var(--green))':'linear-gradient(180deg,var(--purple),var(--neon))';
+    return'<div class="fb-item"><div class="fb-bar-wrap"><div class="fb-bar" style="height:'+h+'%;background:'+bg+'"></div></div><div class="fb-val">'+g.pts+'</div><div class="fb-lbl">'+escH(g.date||('G'+(i+1)))+'</div></div>';
+  }).join('');
+  var propHtml=(d.propSuggestions||[]).map(function(pr){return'<div style="display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border)"><span style="font-size:.9rem;color:var(--ink-muted)">'+escH(pr.prop)+'</span><span class="pill p-orange">'+pr.confidence+'% conf</span></div>';}).join('');
+  card.innerHTML='<div class="pc-header"><div class="pc-avatar">🏀</div><div class="pc-info"><div class="pc-name">'+escH(p.name||name)+'</div><div class="pc-team">'+escH(p.team||'')+(p.position?' · '+p.position:'')+(p.league?' · '+p.league:'')+'</div></div></div>'+
+    '<div class="pc-body">'+
+      '<div style="font-family:\'Syne\',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:.55rem">Last 10 Games Avg</div>'+
+      '<div class="stats-row-grid" style="grid-template-columns:repeat(4,1fr)">'+sbHtml+'</div>'+
+      (d.formTrend?'<div style="background:var(--orange-bg);border:1.5px solid rgba(255,107,0,.25);border-radius:12px;padding:.6rem .9rem;margin:.8rem 0;font-size:.9rem;font-weight:600;color:var(--orange)">⚡ '+escH(d.formTrend)+'</div>':'')+
+      (pts5.length?'<div style="font-family:\'Syne\',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:.5rem">Points — Last 5 Games</div><div class="form-bars" style="height:60px;align-items:flex-end">'+fbHtml+'</div>':'')+
+      (d.injuries?'<div style="margin-top:.8rem;font-size:.9rem;color:var(--ink-dim)">🏥 '+escH(d.injuries)+'</div>':'')+
+      (propHtml?'<div style="font-family:\'Syne\',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);margin:1rem 0 .4rem">Prop Suggestions</div>'+propHtml:'')+
+      (d.bettingNotes?'<div style="margin-top:.8rem;font-size:.9rem;color:var(--ink-muted);font-style:italic;line-height:1.5">'+escH(d.bettingNotes)+'</div>':'')+
+    '</div>';
+  c.appendChild(card);
+}
+
+// ══ PASTE ══
+async function runPaste(){
+  var src={bm:'BetMines',s24:'scores24',espn:'ESPN',oth:'other source'}[activeSrc];
+  var uc;
+  if(pTab==='img'){
+    if(!IMG.paste.b64){alert('Upload a screenshot first.');return;}
+    uc=[{type:'image',source:{type:'base64',media_type:IMG.paste.type,data:IMG.paste.b64}},{type:'text',text:'This is from '+src+'. Extract basketball fixtures and build Iron + Value slips.'}];
+  }else{
+    var txt=document.getElementById('paste-input').value.trim();if(!txt){alert('Paste data first.');return;}
+    uc='From '+src+' (basketball):\n\n'+txt;
+  }
+  document.getElementById('btn-paste').disabled=true;
+  document.getElementById('paste-loading').classList.add('on');
+  document.getElementById('paste-output').classList.remove('on');
+  document.getElementById('paste-render').innerHTML='';
+  startProg();cyc('paste-step',PS_S);
+  try{
+    var raw=await api(SYS_PASTE,uc,false);
+    stopCyc();endProg();
+    document.getElementById('paste-loading').classList.remove('on');
+    document.getElementById('btn-paste').disabled=false;
+    document.getElementById('paste-output').classList.add('on');
+    var parsed=jp(raw);if(parsed)vo(parsed);
+    var ts=makeTS();document.getElementById('paste-ts').textContent=ts;
+    if(parsed&&parsed.games&&parsed.slips){addHist(parsed,ts,'paste');renderOutput('paste-render',parsed,'paste');}
+    else if(raw)renderFb('paste-render',raw);
+    document.getElementById('app-scroll').scrollTop=0;
+  }catch(err){
+    stopCyc();endProg();
+    document.getElementById('paste-loading').classList.remove('on');
+    document.getElementById('btn-paste').disabled=false;
+    document.getElementById('paste-output').classList.add('on');
+    document.getElementById('paste-render').innerHTML='<div class="error-card">⚠️ '+escH(err.message)+'</div>';
+  }
+}
+function rstPaste(){document.getElementById('paste-output').classList.remove('on');document.getElementById('btn-paste').disabled=false;document.getElementById('paste-input').value='';document.getElementById('paste-render').innerHTML='';document.getElementById('paste-stake').value='';clrImg('paste');}
+
+// ══ RENDER OUTPUT ══
+function renderOutput(cid,data,ns){
+  var c=document.getElementById(cid);c.innerHTML='';
+  if(data.summary){var s=document.createElement('div');s.className='summary-card';s.textContent=data.summary;c.appendChild(s);}
+  var games=data.games||[];
+  var inc=games.filter(function(g){return g.tier!=='REMOVED';});
+  var rem=games.filter(function(g){return g.tier==='REMOVED';});
+  if(inc.length){addST(c,'🏀 Game Analysis',inc.length+' selected',false);var gg=document.createElement('div');gg.className='game-grid';inc.forEach(function(x,i){gg.appendChild(mkGameCard(x,i));});c.appendChild(gg);}
+  if(rem.length){addST(c,'❌ Removed',rem.length+' cut',true);if(data.removedSummary){var rn=document.createElement('div');rn.className='error-card';rn.style.marginBottom='.8rem';rn.textContent=data.removedSummary;c.appendChild(rn);}var gg2=document.createElement('div');gg2.className='game-grid';rem.forEach(function(x,i){gg2.appendChild(mkGameCard(x,i));});c.appendChild(gg2);}
+  if(data.slips){addST(c,'⚡ Iron & Value Slips','','');var sg=document.createElement('div');sg.className='slips-grid';[{key:'iron',cls:'slip-iron',badge:'⚡ Iron Slip',name:'Iron Slip'},{key:'value',cls:'slip-value',badge:'💎 Value Slip',name:'Value Slip'}].forEach(function(def,di){var slip=data.slips[def.key];if(slip)sg.appendChild(mkSlip(slip,def,di,ns));});c.appendChild(sg);}
+  updRet(ns);
+}
+
+function addST(c,html,sub,isRed){var el=document.createElement('div');el.className='sec-label';el.style.marginTop='.4rem';el.innerHTML=html+(sub?'<span style="font-size:.88rem;font-weight:400;color:'+(isRed?'var(--red)':'var(--ink-dim)')+';"> ('+sub+')</span>':'');c.appendChild(el);}
+
+var STRIPES=['stripe-a','stripe-b','stripe-c'];
+
+function mkGameCard(g,idx){
+  var tier=g.tier||'A';
+  var tierPill={A:'p-green',B:'p-gold',C:'p-teal',REMOVED:'p-red'}[tier]||'p-gray';
+  var stripe=tier==='REMOVED'?'stripe-r':STRIPES[idx%3];
+  var card=document.createElement('div');card.className='game-card';card.style.animationDelay=(idx*.06)+'s';
+  // Home/away form
+  var hf=g.homeForm||{};var af=g.awayForm||{};
+  var formHtml='';
+  if(hf.last5||af.last5){
+    formHtml='<div class="gc-stats">'+
+      mkStatBar('Home form',hf.last5||'–',hf.avgPts||0,130,'sf-orange')+
+      mkStatBar('Away form',af.last5||'–',af.avgPts||0,130,'sf-purple')+
+    '</div>';
+  }
+  // Markets
+  var mkts=(g.markets||[]).map(function(m){var hot=m.confidence>=4;return'<div class="mkt-card'+(hot?' hot':'')+'"><div class="mkt-name">'+escH(m.name||'')+'</div><div class="mkt-pick">'+escH(m.pick||'')+'</div><div class="mkt-odds">'+(m.odds?'@'+m.odds:'')+(m.confidence?' · '+m.confidence+'/5':'')+'</div></div>';}).join('');
+  var inds=(g.indicators||[]).concat(g.keyPlayers?g.keyPlayers.map(function(p){return p.name+' ('+p.team+'): '+p.formTrend||'';}): []).map(function(x){return'<div class="ind">'+escH(x)+'</div>';}).join('');
+  // Top key players
+  var kpHtml='';if(g.keyPlayers&&g.keyPlayers.length){kpHtml='<div style="margin:.6rem 0">'+g.keyPlayers.slice(0,2).map(function(p){var a=p.last5avg||{};return'<div style="display:flex;align-items:center;justify-content:space-between;padding:.38rem 0;border-bottom:1px solid rgba(42,42,66,.4)"><span style="font-size:.9rem;font-weight:600;color:var(--ink)">'+escH(p.name||'')+'</span><div style="display:flex;gap:.3rem;flex-wrap:wrap">'+mkSmPill(a.pts,'PTS','p-orange')+mkSmPill(a.reb,'REB','p-teal')+mkSmPill(a.ast,'AST','p-green')+mkSmPill(a.threes,'3PM','p-purple')+'</div></div>';}).join('')+'</div>';}
+  card.innerHTML='<div class="gc-stripe '+stripe+'"></div>'+
+    '<div class="gc-body">'+
+      '<div class="gc-league">'+escH(g.league||'')+(g.injuries?'<span style="font-size:.8rem;color:var(--red)"> · 🏥 '+escH(g.injuries.slice(0,40))+'</span>':'')+'</div>'+
+      '<div class="gc-teams">'+escH(g.match||((g.homeTeam||'')+(g.awayTeam?' vs '+g.awayTeam:'')))+'</div>'+
+      '<div class="gc-meta"><span class="pill '+tierPill+'">Tier '+tier+'</span>'+(g.h2h?'<span class="pill p-gold">'+escH(g.h2h.slice(0,30))+'</span>':'')+(g.paceRating?'<span class="pill p-teal">'+escH(g.paceRating.slice(0,20))+'</span>':'')+'</div>'+
+      formHtml+kpHtml+
+      (mkts?'<div class="markets-grid">'+mkts+'</div>':'')+
+      (inds?'<div class="gc-inds">'+inds+'</div>':'')+
+      '<div class="gc-reason">'+escH(g.reason||'')+'</div>'+
+      (g.whatKillsThis?'<div class="kill-warn">⚠️ '+escH(g.whatKillsThis)+'</div>':'')+
+    '</div>';
+  return card;
+}
+
+function mkStatBar(label,rec,val,max,fillCls){
+  var pct=Math.min(100,Math.round((val/max)*100));
+  return'<div class="stat-row"><span class="stat-label">'+label+'</span><div class="stat-bar"><div class="stat-fill '+fillCls+'" style="width:'+pct+'%"></div></div><span class="stat-val">'+escH(rec)+'</span></div>';
+}
+function mkSmPill(val,label,cls){if(!val&&val!==0)return'';return'<span class="pill '+cls+'" style="font-size:.72rem;padding:.15rem .5rem">'+parseFloat(val).toFixed(1)+' '+label+'</span>';}
+
+function mkSlip(slip,def,di,ns){
+  var card=document.createElement('div');card.className='slip-card '+def.cls;card.style.animationDelay=(di*.12)+'s';
+  var legs=(slip.legs||[]).map(function(l){return'<div class="slip-leg"><span class="leg-match">'+escH(l.match||l.team||'')+'</span><span class="leg-mkt">'+escH(l.market||'')+'</span><span class="leg-odds">'+(l.odds||'–')+'</span></div>';}).join('');
+  var ct=def.name+' — '+(slip.legs||[]).length+' legs\n'+(slip.legs||[]).map(function(l){return'• '+(l.match||l.team||'')+' · '+(l.market||'')+' @ '+l.odds;}).join('\n')+'\nTotal Odds: '+slip.totalOdds;
+  var es=ct.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n');
+  card.innerHTML='<div class="slip-head"><div class="slip-badge">'+def.badge+' · '+(slip.legs||[]).length+' Legs</div><div class="slip-name">'+def.name+'</div>'+(slip.notes?'<div class="slip-note">'+escH(slip.notes)+'</div>':'')+
+    (slip.stakeAdvice?'<div class="slip-stake-pill">'+escH(slip.stakeAdvice)+'</div>':'')+
+    '</div><div class="slip-legs">'+legs+'</div>'+
+    '<div class="slip-foot"><div><div class="total-lbl">Total Odds</div><div class="total-odds">'+(slip.totalOdds||'–')+'</div></div>'+
+    '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem"><div class="slip-ret"><span>Return</span><span class="ret-amt"></span></div><button class="btn-copy" onclick="cpSlip(this,\''+es+'\')">⎘ Copy</button></div></div>';
+  return card;
+}
+
+function renderFb(cid,text){var c=document.getElementById(cid);c.innerHTML='';var n=document.createElement('div');n.className='summary-card';n.style.borderColor='var(--gold)';n.textContent='Unstructured response. Try running again.';c.appendChild(n);var r=document.createElement('div');r.className='raw-out';r.textContent=text;c.appendChild(r);}
+
+// ══ STAKE / RETURNS ══
+function updRet(ns){
+  var sEl=document.getElementById(ns+'-stake');if(!sEl)return;
+  var stake=parseFloat(sEl.value)||0;
+  var rEl=document.getElementById(ns+'-render');if(!rEl)return;
+  rEl.querySelectorAll('.slip-card').forEach(function(card){
+    var oEl=card.querySelector('.total-odds'),retEl=card.querySelector('.slip-ret'),aEl=card.querySelector('.ret-amt');
+    if(!oEl||!retEl||!aEl)return;
+    var odds=parseFloat(oEl.textContent)||0;
+    if(stake>0&&odds>0){aEl.textContent='KES '+(stake*odds).toLocaleString('en-KE',{minimumFractionDigits:0,maximumFractionDigits:0});retEl.classList.add('vis');}
+    else retEl.classList.remove('vis');
+  });
+}
+
+// ══ TARGET WINNINGS ══
+function fmt(n){if(n>=1000000)return'KES '+(n/1000000).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1000)return'KES '+Math.round(n/1000)+'K';return'KES '+Math.round(n);}
+function fmtE(n){return'KES '+Math.ceil(n).toLocaleString('en-KE');}
+function selT(btn,ns,lo,hi){
+  btn.closest('.target-tiers').querySelectorAll('.tier-btn').forEach(function(b){b.classList.remove('ta');});
+  btn.classList.add('ta');
+  var rEl=document.getElementById(ns+'-render');if(!rEl)return;
+  var iO=0,vO=0;
+  rEl.querySelectorAll('.slip-card').forEach(function(c){var o=parseFloat((c.querySelector('.total-odds')||{}).textContent)||0;if(c.classList.contains('slip-iron'))iO=o;if(c.classList.contains('slip-value'))vO=o;});
+  document.getElementById(ns+'-tg-range').textContent=fmt(lo)+' – '+fmt(hi);
+  var grid=document.getElementById(ns+'-scs-grid');grid.innerHTML='';
+  var slips=[{odds:iO,badge:'⚡ Iron',cls:'scs-iron',name:'Iron Slip'},{odds:vO,badge:'💎 Value',cls:'scs-value',name:'Value Slip'}];
+  var recs=[];
+  slips.forEach(function(sl){
+    var card=document.createElement('div');card.className='scs';
+    if(!sl.odds||sl.odds<=1){card.innerHTML='<div class="scs-badge '+sl.cls+'">'+sl.badge+'</div><div class="scs-name">'+sl.name+'</div><div class="scs-verdict">Run analysis first.</div>';grid.appendChild(card);return;}
+    var mid=(lo+hi)/2,stk=mid/sl.odds,slo=lo/sl.odds,shi=hi/sl.odds;
+    var feas=stk<50?'Very accessible':stk<500?'Accessible':stk<2000?'Moderate':stk<10000?'High':'Very high';
+    var verdict=stk<100?'Excellent. Low stake for strong return.':stk<1000?'Good balance.':stk<5000?'Meaningful stake — Iron Slip is safer at this level.':'Large stake — consider lower target or wait for stronger odds.';
+    recs.push({name:sl.name,stake:stk,odds:sl.odds});
+    card.innerHTML='<div class="scs-badge '+sl.cls+'">'+sl.badge+'</div><div class="scs-name">'+sl.name+'</div><div class="scs-odds">'+sl.odds+'× · '+feas+'</div><div class="scs-lbl">Stake needed</div><div class="scs-val">'+fmtE(stk)+'</div><div class="scs-range">Range: '+fmtE(slo)+' → '+fmtE(shi)+'</div><div class="scs-verdict">'+verdict+'</div>';
+    grid.appendChild(card);
+  });
+  var rb=document.getElementById(ns+'-rec-box');rb.innerHTML='';
+  if(recs.length){
+    var best=recs.reduce(function(b,r){return r.stake<b.stake?r:b;},recs[0]);
+    var txt=best.stake<100?'For <strong>'+fmt(lo)+'–'+fmt(hi)+'</strong>, stake just <strong>'+fmtE(best.stake)+'</strong> on the <strong>'+best.name+'</strong>. Low risk.':
+             best.stake<1000?'To hit <strong>'+fmt(lo)+'–'+fmt(hi)+'</strong>, stake <strong>'+fmtE(best.stake)+'</strong> on the <strong>'+best.name+'</strong>.'+(iO&&vO?' Split: Iron '+fmtE(best.stake*.6)+' / Value '+fmtE(best.stake*.35)+'.':''):
+             'Reaching <strong>'+fmt(lo)+'–'+fmt(hi)+'</strong> requires <strong>'+fmtE(best.stake)+'</strong>. Use Iron Slip — its higher win rate protects capital at this stake level.';
+    rb.innerHTML='<div class="rec-ico">🏀</div><div><div class="rec-title">Recommendation</div><div class="rec-text">'+txt+'</div></div>';
+  }
+  document.getElementById(ns+'-t-res').classList.add('vis');
+}
+
+// ══ COPY ══
+function cpSlip(btn,t){var d=t.replace(/\\n/g,'\n').replace(/\\'/g,"'");var ok=function(){btn.textContent='✓ Copied';btn.classList.add('cp');setTimeout(function(){btn.textContent='⎘ Copy';btn.classList.remove('cp');},2000);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(d).then(ok).catch(function(){fb2(d,ok);});}else{fb2(d,ok);}}
+function fb2(t,cb){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');cb();}catch(e){}document.body.removeChild(ta);}
+
+// ══ HISTORY MINI ══
+function renderHistMini(){
+  var el=document.getElementById('hist-list-mini');if(!el)return;el.innerHTML='';
+  if(!HIST.length){el.innerHTML='<div class="hist-empty">No analyses saved yet.</div>';return;}
+  HIST.slice(0,5).forEach(function(e,idx){
+    var item=document.createElement('div');item.className='hist-item htype-'+e.type;
+    var lgs=e.d.slips&&e.d.slips.iron?(e.d.slips.iron.legs||[]).length:0;
+    item.innerHTML='<div class="hi-meta"><span>'+escH(e.ts)+'</span><button class="btn-del" onclick="delHist('+idx+',event)">✕</button></div>'+
+      '<div class="hi-summary">'+escH(e.d.summary||'Analysis '+(idx+1))+'</div>'+
+      '<div class="hi-chips"><span class="pill p-orange">'+lgs+' Iron legs</span><span class="pill p-gray">'+escH(e.type)+'</span></div>';
+    item.addEventListener('click',function(ev){if(ev.target.classList.contains('btn-del'))return;goTo('analyse');document.getElementById('an-output').classList.add('on');document.getElementById('an-render').innerHTML='';renderOutput('an-render',e.d,'an');document.getElementById('an-ts').textContent=e.ts;document.getElementById('an-target').style.display='block';document.getElementById('app-scroll').scrollTop=0;});
+    el.appendChild(item);
+  });
+}
+function delHist(idx,e){e.stopPropagation();HIST.splice(idx,1);saveHist();renderHistMini();}
+
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
